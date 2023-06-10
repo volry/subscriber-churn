@@ -9,7 +9,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+data-from-BLD
 # Distribution / packaging
 .Python
 build/
