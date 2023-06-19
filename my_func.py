@@ -2,6 +2,7 @@
 
 ### this file contains my functions and other one's that can be used multiply times
 import pickle
+import pandas as pd
 from datetime import datetime, timedelta
 
 
@@ -53,3 +54,38 @@ def reduce_mem_usage(df, verbose=True):
     end_mem = df.memory_usage().sum() / 1024**2
     if verbose: print('Mem. usage decreased to {:5.2f} Mb ({:.1f}% reduction)'.format(end_mem, 100 * (start_mem - end_mem) / start_mem))
     return df
+
+
+# дивимось на категоріальні дані, та їх кількість
+# в зміну cat_col_lst зберігаю назви категоріальних колонок
+# вивиджу датасет із кількістю унікальних значень в кожній колонці і кількість місінгів
+
+def categorical_col_info(df: pd.DataFrame) -> pd.DataFrame:
+    
+    """
+    подаємо на вхід датафрейм.
+    функція відбирає обєкти, і далі видає датафрейм, який 
+    показує назву колонки, кількість унікальних значень, і кількість пропущених значень
+    """
+    
+    
+    unique_values_lst = []
+    missing_values_lst = []
+    cat_col_lst = []
+
+    for col in df.select_dtypes(include='object').columns:
+        unique_values = df[col].nunique()
+        missing_values = df[col].isna().sum()
+
+        cat_col_lst.append(col)
+        unique_values_lst.append(unique_values)
+        missing_values_lst.append(missing_values)
+
+    column_summary_df = pd.DataFrame({
+        'Column': cat_col_lst,
+        'Unique values': unique_values_lst,
+        'Missing values': missing_values_lst
+    })
+
+    column_summary_df.loc['Total'] = [len(cat_col_lst), sum(unique_values_lst), sum(missing_values_lst)]
+    return column_summary_df
