@@ -89,18 +89,3 @@ def categorical_col_info(df: pd.DataFrame) -> pd.DataFrame:
 
     column_summary_df.loc['Total'] = [len(cat_col_lst), sum(unique_values_lst), sum(missing_values_lst)]
     return column_summary_df
-
-
-def count_missing_values(df):
-    missing_values = df.isnull().sum()
-    missing_values_percent = (missing_values / len(df)) * 100
-    result_df = pd.DataFrame({
-        'Column': missing_values.index,
-        'Missing Values': missing_values.values,
-        'Missing Values (%)': missing_values_percent.values
-    })
-    result_df = result_df[result_df['Missing Values'] > 0]  # Filter out columns with no missing values
-    missing_values_df_sorted = result_df.sort_values(by='Missing Values (%)', ascending=False)
-    
-
-    return missing_values_df_sorted
