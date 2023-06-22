@@ -104,3 +104,11 @@ def count_missing_values(df):
     
 
     return missing_values_df_sorted
+
+
+# model_pipeline = {'Model_name': 'Titanic',
+#                   'preprocess': preprocess_string,
+#                   'algorythm': 'dont know yet',
+#                   'model': 'in process',
+#                   'score': 0.9}
+#                  # 'features': df_train.columns}
