@@ -9,9 +9,7 @@ import re
 
 
 def save_model(model = None, features = []):
-    class_name = re.sub(r'[^a-zA-Z0-9]', '_', str(model.__class__))
-
-    name = class_name + '_' + datetime.today().strftime("%d%m%Y_%H_%M") + '.pickle'
+    name = str(model.__class__).split('.')[-1][:-2] + '_' + datetime.today().strftime("%d%m%Y_%H_%M") + '.pickle'    
     if model:
         with open(name, 'wb') as file:
             pickle.dump((model, features), file)
