@@ -5,8 +5,8 @@ import pickle
 import pandas as pd
 from datetime import datetime, timedelta
 import re
-
-
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
 
 def save_model(model = None, features = []):
     name = str(model.__class__).split('.')[-1][:-2] + '_' + datetime.today().strftime("%d%m%Y_%H_%M") + '.pickle'    
@@ -113,3 +113,38 @@ def count_missing_values(df):
 #                   'model': 'in process',
 #                   'score': 0.9}
 #                  # 'features': df_train.columns}
+
+def binary_classification_metrics(y_true_tr, y_pred_tr, y_true_val=None, y_pred_val=None, report=False):
+    print("{:<15} {:<10} {:<10} {:<10}".format('Metrics', 'Train', 'Test', '\u0394'))
+    metrics_dict = {}
+
+    metrics_dict['roc_auc'] = np.round(roc_auc_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['accuracy'] = np.round(accuracy_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['precision'] = np.round(precision_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['recall'] = np.round(recall_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['f1_score'] = np.round(f1_score(y_true_tr, y_pred_tr), 4)
+
+    if y_true_val is not None:
+        metrics_dict_test = {}
+        metrics_dict_test['roc_auc'] = np.round(roc_auc_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['accuracy'] = np.round(accuracy_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['precision'] = np.round(precision_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['recall'] = np.round(recall_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['f1_score'] = np.round(f1_score(y_true_val, y_pred_val), 4)
+        
+        for metrics, value in metrics_dict.items():
+            value_test = metrics_dict_test[metrics]
+            diff = np.round(metrics_dict_test[metrics] - value, 4)
+            print("{:<15} {:<10} {:<10} {:<10}".format(metrics, value, value_test, diff))
+    else:
+        for metrics, value in metrics_dict.items():
+            print("{:<15} {:<10}".format(metrics, value))
+    
+    if report:
+        print('\n')
+        print('Train:')
+        print(classification_report(y_true_tr, y_pred_tr))
+        if y_true_val is not None:
+            print('Test:')
+            print(classification_report(y_true_val, y_pred_val))
+
