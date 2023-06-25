@@ -3,10 +3,12 @@
 ### this file contains my functions and other one's that can be used multiply times
 import pickle
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 import re
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import classification_report, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
+
 
 def save_model(model = None, features = []):
     name = str(model.__class__).split('.')[-1][:-2] + '_' + datetime.today().strftime("%d%m%Y_%H_%M") + '.pickle'    
