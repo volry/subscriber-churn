@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import re
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import classification_report, roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, roc_auc_score
 
 
 def save_model(model = None, features = []):
@@ -150,3 +152,24 @@ def binary_classification_metrics(y_true_tr, y_pred_tr, y_true_val=None, y_pred_
             print('Test:')
             print(classification_report(y_true_val, y_pred_val))
 
+
+
+def plot_roc_auc_ensemble(y_true, y_pred, title):
+    # Calculate the ROC curve and AUC
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    auc = roc_auc_score(y_true, y_pred)
+
+    # Plot the ROC curve
+    plt.plot(fpr, tpr, color='blue', label="ROC curve (AUC = {:.3f})".format(auc))
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Plot the diagonal line
+
+    # Set x-axis and y-axis labels
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+
+    # Set the title and legend
+    plt.title(title)
+    plt.legend(loc="lower right")
+
+    # Show the plot
+    plt.show()
