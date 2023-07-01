@@ -101,11 +101,11 @@ def count_missing_values(df):
     missing_values_percent = (missing_values / len(df)) * 100
     result_df = pd.DataFrame({
         'Column': missing_values.index,
-        'Missing Values': missing_values.values,
-        'Missing Values (%)': missing_values_percent.values
+        'Missing_Values': missing_values.values,
+        'Missing_Values_%': missing_values_percent.values
     })
-    result_df = result_df[result_df['Missing Values'] > 0]  # Filter out columns with no missing values
-    missing_values_df_sorted = result_df.sort_values(by='Missing Values (%)', ascending=False)
+    result_df = result_df[result_df['Missing_Values'] > 0]  # Filter out columns with no missing values
+    missing_values_df_sorted = result_df.sort_values(by='Missing_Values_%', ascending=False)
     
 
     return missing_values_df_sorted
