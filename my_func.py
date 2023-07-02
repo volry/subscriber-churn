@@ -173,3 +173,32 @@ def plot_roc_auc_ensemble(y_true, y_pred, title):
 
     # Show the plot
     plt.show()
+
+
+
+    
+from sklearn.metrics import roc_curve, roc_auc_score
+import matplotlib.pyplot as plt
+
+def plot_roc_auc_train_test(y_train, y_train_pred, y_test, y_test_pred, title):
+    fpr_train, tpr_train, _ = roc_curve(y_train, y_train_pred)
+    auc_train = roc_auc_score(y_train, y_train_pred)
+
+    fpr_test, tpr_test, _ = roc_curve(y_test, y_test_pred)
+    auc_test = roc_auc_score(y_test, y_test_pred)
+
+    plt.plot(fpr_train, tpr_train, color='blue', label="Train, AUC={:.3f}".format(auc_train), linestyle='-')
+    plt.plot(fpr_test, tpr_test, color='black', label="Test, AUC={:.3f}".format(auc_test), linestyle='--')
+
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')
+
+    plt.xticks(np.arange(0.0, 1.1, step=0.1))
+    plt.xlabel("False Positive Rate", fontsize=15)
+
+    plt.yticks(np.arange(0.0, 1.1, step=0.1))
+    plt.ylabel("True Positive Rate", fontsize=15)
+
+    plt.title(title, fontweight='bold', fontsize=15)
+    plt.legend(prop={'size': 13}, loc='lower right')
+
+    plt.show()
