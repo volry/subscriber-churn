@@ -3,8 +3,13 @@
 ### this file contains my functions and other one's that can be used multiply times
 import pickle
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
-
+import re
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve
 
 
 def save_model(model = None, features = []):
@@ -88,4 +93,137 @@ def categorical_col_info(df: pd.DataFrame) -> pd.DataFrame:
     })
 
     column_summary_df.loc['Total'] = [len(cat_col_lst), sum(unique_values_lst), sum(missing_values_lst)]
+<<<<<<< HEAD
     return column_summary_df
+||||||| 122ca19
+    return column_summary_df
+
+
+def count_missing_values(df):
+    missing_values = df.isnull().sum()
+    missing_values_percent = (missing_values / len(df)) * 100
+    result_df = pd.DataFrame({
+        'Column': missing_values.index,
+        'Missing Values': missing_values.values,
+        'Missing Values (%)': missing_values_percent.values
+    })
+    result_df = result_df[result_df['Missing Values'] > 0]  # Filter out columns with no missing values
+    missing_values_df_sorted = result_df.sort_values(by='Missing Values (%)', ascending=False)
+    
+
+    return missing_values_df_sorted
+=======
+    return column_summary_df
+
+
+def count_missing_values(df):
+    missing_values = df.isnull().sum()
+    missing_values_percent = (missing_values / len(df)) * 100
+    result_df = pd.DataFrame({
+        'Column': missing_values.index,
+        'Missing_Values': missing_values.values,
+        'Missing_Values_%': missing_values_percent.values
+    })
+    result_df = result_df[result_df['Missing_Values'] > 0]  # Filter out columns with no missing values
+    missing_values_df_sorted = result_df.sort_values(by='Missing_Values_%', ascending=False)
+    
+
+    return missing_values_df_sorted
+
+
+# model_pipeline = {'Model_name': 'Titanic',
+#                   'preprocess': preprocess_string,
+#                   'algorythm': 'dont know yet',
+#                   'model': 'in process',
+#                   'score': 0.9}
+#                  # 'features': df_train.columns}
+
+def binary_classification_metrics(y_true_tr, y_pred_tr, y_true_val=None, y_pred_val=None, report=False):
+    print("{:<15} {:<10} {:<10} {:<10}".format('Metrics', 'Train', 'Test', '\u0394'))
+    metrics_dict = {}
+
+    metrics_dict['roc_auc'] = np.round(roc_auc_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['accuracy'] = np.round(accuracy_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['precision'] = np.round(precision_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['recall'] = np.round(recall_score(y_true_tr, y_pred_tr), 4)
+    metrics_dict['f1_score'] = np.round(f1_score(y_true_tr, y_pred_tr), 4)
+
+    if y_true_val is not None:
+        metrics_dict_test = {}
+        metrics_dict_test['roc_auc'] = np.round(roc_auc_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['accuracy'] = np.round(accuracy_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['precision'] = np.round(precision_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['recall'] = np.round(recall_score(y_true_val, y_pred_val), 4)
+        metrics_dict_test['f1_score'] = np.round(f1_score(y_true_val, y_pred_val), 4)
+        
+        for metrics, value in metrics_dict.items():
+            value_test = metrics_dict_test[metrics]
+            diff = np.round(metrics_dict_test[metrics] - value, 4)
+            print("{:<15} {:<10} {:<10} {:<10}".format(metrics, value, value_test, diff))
+    else:
+        for metrics, value in metrics_dict.items():
+            print("{:<15} {:<10}".format(metrics, value))
+    
+    if report:
+        print('\n')
+        print('Train:')
+        print(classification_report(y_true_tr, y_pred_tr))
+        if y_true_val is not None:
+            print('Test:')
+            print(classification_report(y_true_val, y_pred_val))
+
+
+
+
+
+
+
+def plot_roc_auc_ensemble(y_true, y_pred, title):
+    # Calculate the ROC curve and AUC
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    auc = roc_auc_score(y_true, y_pred)
+
+    # Plot the ROC curve
+    plt.plot(fpr, tpr, color='blue', label="ROC curve (AUC = {:.3f})".format(auc))
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')  # Plot the diagonal line
+
+    # Set x-axis and y-axis labels
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+
+    # Set the title and legend
+    plt.title(title)
+    plt.legend(loc="lower right")
+
+    # Show the plot
+    plt.show()
+
+
+
+    
+from sklearn.metrics import roc_curve, roc_auc_score
+import matplotlib.pyplot as plt
+
+def plot_roc_auc_train_test(y_train, y_train_pred, y_test, y_test_pred, title):
+    fpr_train, tpr_train, _ = roc_curve(y_train, y_train_pred)
+    auc_train = roc_auc_score(y_train, y_train_pred)
+
+    fpr_test, tpr_test, _ = roc_curve(y_test, y_test_pred)
+    auc_test = roc_auc_score(y_test, y_test_pred)
+
+    plt.plot(fpr_train, tpr_train, color='blue', label="Train, AUC={:.3f}".format(auc_train), linestyle='-')
+    plt.plot(fpr_test, tpr_test, color='black', label="Test, AUC={:.3f}".format(auc_test), linestyle='--')
+
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--')
+
+    plt.xticks(np.arange(0.0, 1.1, step=0.1))
+    plt.xlabel("False Positive Rate", fontsize=15)
+
+    plt.yticks(np.arange(0.0, 1.1, step=0.1))
+    plt.ylabel("True Positive Rate", fontsize=15)
+
+    plt.title(title, fontweight='bold', fontsize=15)
+    plt.legend(prop={'size': 13}, loc='lower right')
+
+    plt.show()
+>>>>>>> only_lgbm
